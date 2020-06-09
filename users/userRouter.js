@@ -1,7 +1,9 @@
 const express = require('express')
 const db = require('./userDb')
+const posts = require('../posts/postDb')
 const validateUser = require('../middleware/validateUser')
 const validateUserId = require('../middleware/validateUserId')
+const validatePost = require('../middleware/validatePost')
 
 const router = express.Router();
 
@@ -9,13 +11,18 @@ router.post('/', validateUser(), (req, res, next) => {
   // do your magic!
   db.insert(req.body)
 		.then((user) => {
-			res.status(201).json(user)
+			return res.status(201).json(user)
 		})
 		.catch(next)
 });
 
-router.post('/:id/posts', (req, res, next) => {
+router.post('/:id/posts', validateUserId(), validatePost(), (req, res, next) => {
   // do your magic!
+  posts.insert(req.body)
+    .then(postId=>{
+      return res.status(201).json(postId)
+    })
+    .catch(next)
 });
 
 router.get('/', (req, res, next) => {
@@ -27,20 +34,40 @@ router.get('/', (req, res, next) => {
     .catch(next)
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', validateUserId(), (req, res, next) => {
   // do your magic!
+  db.getById(req.params.id)
+    .then(user=>{
+      return res.status(200).json(user)
+    })
+    .catch(next)
 });
 
-router.get('/:id/posts', (req, res, next) => {
+router.get('/:id/posts', validateUserId(), (req, res, next) => {
   // do your magic!
+  db.getUserPosts(req.params.id)
+    .then(posts=>{
+      return res.status(200).json(posts)
+    })
+    .catch(next)
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', validateUserId(), (req, res, next) => {
   // do your magic!
+  db.remove(req.params.id)
+    .then(data=> {
+      return res.status(200).json(data)
+    })
+    .catch(next)
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', validateUserId(), validateUser(), (req, res, next) => {
   // do your magic!
+  db.update(req.params.id,req.body)
+    .then(data=>{
+      return res.status(200).json(data)
+    })
+    .catch(next)
 });
 
 //custom middleware

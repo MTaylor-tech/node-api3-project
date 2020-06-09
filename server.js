@@ -20,6 +20,7 @@ server.use('/posts', postRouter)
 server.use(errorHandler())
 //custom middleware
 
+
 //function logger(req, res, next) {}
 
 module.exports = server;
