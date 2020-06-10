@@ -7,7 +7,7 @@ module.exports = (format) => {
 				break
 			case "long":
 			default:
-				console.log(`[${time}] $${req.ip} - ${req.method} ${req.url} - ${req.headers["user-agent"]} => ${req.body}`)
+				console.log(`[${time}] $${req.ip} - ${req.method} ${req.url} - ${req.headers["user-agent"]}`)
 		}
 		next()
 	}

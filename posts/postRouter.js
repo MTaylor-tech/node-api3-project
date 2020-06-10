@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
 
 router.get('/:id', validatePostId(), (req, res, next) => {
   // do your magic!
-  db.getById()
+  db.getById(req.params.id)
     .then(post=>{
       return res.status(200).json(post)
     })
@@ -25,8 +25,12 @@ router.get('/:id', validatePostId(), (req, res, next) => {
 router.delete('/:id', validatePostId(), (req, res, next) => {
   // do your magic!
   db.remove(req.params.id)
-    .then(data=>{
-      return res.status(200).json(data)
+    .then(success=>{
+      if (success===1) {
+        return res.status(200).json({message: "Post deleted"})
+      } else {
+        return res.status(500).json({message: "Post could not be deleted"})
+      }
     })
     .catch(next)
 });
@@ -34,8 +38,11 @@ router.delete('/:id', validatePostId(), (req, res, next) => {
 router.put('/:id', validatePostId(), validatePost(), (req, res, next) => {
   // do your magic!
   db.update(req.params.id,req.body)
-    .then(data=>{
-      return res.status(200).json(data)
+    .then(success=>{
+      return db.getById(req.params.id)
+    })
+    .then(post=>{
+      return res.status(200).json(post)
     })
     .catch(next)
 });
